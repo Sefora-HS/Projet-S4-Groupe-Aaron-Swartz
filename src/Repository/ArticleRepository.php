@@ -71,4 +71,3 @@ class ArticleRepository extends ServiceEntityRepository
     }   
 
 }
-é
