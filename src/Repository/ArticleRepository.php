@@ -47,4 +47,28 @@ class ArticleRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function countAll(): int
+    {
+    return (int) $this->createQueryBuilder('a')
+        ->select('COUNT(a.id)')
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
+
+    public function findPaginated(int $page, int $limit): array
+    {
+    $page = max(1, $page);
+    $limit = min(max(1, $limit), 50);
+    $offset = ($page - 1) * $limit;
+
+    return $this->createQueryBuilder('a')
+        ->orderBy('a.id', 'DESC')  
+        ->setFirstResult($offset)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+    }   
+
 }
+é

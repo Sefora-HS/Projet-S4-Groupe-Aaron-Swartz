@@ -14,12 +14,27 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/article')]
 class ArticleController extends AbstractController
 {
+    // Pagination
     #[Route('/', name: 'article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(Request $request, ArticleRepository $articleRepository): Response
     {
-        return $this->render('article/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
-        ]);
+    $page = max(1, $request->query->getInt('page', 1));
+    $limit = 6; // nombre d'articles par page
+
+    $totalArticles = $articleRepository->countAll();
+    $totalPages = max(1, (int) ceil($totalArticles / $limit));
+
+    if ($page > $totalPages) {
+        $page = $totalPages;
+    }
+
+    $articles = $articleRepository->findPaginated($page, $limit);
+
+    return $this->render('article/index.html.twig', [
+        'articles' => $articles,
+        'page' => $page,
+        'totalPages' => $totalPages,
+    ]);
     }
 
     #[Route('/new', name: 'article_new', methods: ['GET', 'POST'])]

@@ -38,6 +38,29 @@
         {% endfor %}
         </tbody>
     </table>
+    
+    {% if totalPages > 1 %}
+    <nav aria-label="Pagination">
+        <ul class="pagination">
+
+            <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('article_index', {'page': page - 1}) }}">Précédent</a>
+            </li>
+
+            {% for p in 1..totalPages %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ path('article_index', {'page': p}) }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+
+            <li class="page-item {% if page >= totalPages %}disabled{% endif %}">
+                <a class="page-link" href="{{ path('article_index', {'page': page + 1}) }}">Suivant</a>
+            </li>
+
+        </ul>
+    </nav>
+    {% endif %}
+
 
     <a href="{{ path('article_new') }}">Create new</a>
 {% endblock %}
