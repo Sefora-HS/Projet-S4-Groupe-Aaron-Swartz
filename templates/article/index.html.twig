@@ -5,6 +5,18 @@
 {% block body %}
     <h1>Article index</h1>
 
+    {# --- DÉBUT DE TA PERSONNALISATION FRONT-END --- #}
+    <div class="my-4">
+        <form method="get" class="d-flex">
+            <input type="text" name="q" value="{{ search_query|default('') }}" class="form-control me-2" placeholder="Rechercher par titre...">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+            {% if search_query %}
+                <a href="{{ path('article_index') }}" class="btn btn-outline-secondary ms-2">Effacer</a>
+            {% endif %}
+        </form>
+    </div>
+    {# --- FIN DE TA PERSONNALISATION FRONT-END --- #}
+
     <table class="table">
         <thead>
             <tr>
@@ -12,7 +24,7 @@
                 <th>Title</th>
                 <th>Category</th>
                 <th>Content</th>
-                <th>actions</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,17 +39,17 @@
                 </td>
                 <td>{{ article.content }}</td>
                 <td>
-                    <a href="{{ path('article_show', {'id': article.id}) }}">show</a>
-                    <a href="{{ path('article_edit', {'id': article.id}) }}">edit</a>
+                    <a href="{{ path('article_show', {'id': article.id}) }}" class="btn btn-sm btn-info">show</a>
+                    <a href="{{ path('article_edit', {'id': article.id}) }}" class="btn btn-sm btn-warning">edit</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="5">Aucun article trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('article_new') }}">Create new</a>
+    <a href="{{ path('article_new') }}" class="btn btn-success">Create new</a>
 {% endblock %}

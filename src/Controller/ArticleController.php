@@ -14,13 +14,34 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/article')]
 class ArticleController extends AbstractController
 {
+    // --- PARTIE MODIFIÉE POUR LA RECHERCHE (BACK-END) ---
     #[Route('/', name: 'article_index', methods: ['GET'])]
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(ArticleRepository $articleRepository, Request $request): Response
     {
+      
+        $recherche = $request->query->get('q');
+
+        if ($recherche) {
+            // Si l'utilisateur a tapé un mot, on cherche les articles qui correspondent au titre
+            $articles = $articleRepository->findBy(['title' => $recherche]);
+        } else {
+           
+            $articles = $articleRepository->findAll();
+        }
+
+        $session = $request->getSession();
+        $visites = $session->get('nb_visites', 0) + 1;
+        $session->set('nb_visites', $visites);
+        
+        //Compteur de visites
+        
         return $this->render('article/index.html.twig', [
-            'articles' => $articleRepository->findAll(),
+            'articles' => $articles,
+            'search_query' => $recherche, 
+            'visites' => $visites,
         ]);
     }
+  
 
     #[Route('/new', name: 'article_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -78,4 +99,6 @@ class ArticleController extends AbstractController
 
         return $this->redirectToRoute('article_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
 }
